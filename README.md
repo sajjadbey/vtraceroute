@@ -21,6 +21,29 @@ flag, country, city, ASN, and organisation.
 - Java 17 or later
 - Windows (`tracert`) or Linux (`traceroute` installed)
 
+## Setup — GeoLite2 databases
+
+Create a `databases` folder in the project root and download the two MaxMind
+GeoLite2 databases into it:
+
+```
+mkdir databases
+curl -L -o databases/GeoLite2-City.mmdb https://git.io/GeoLite2-City.mmdb
+curl -L -o databases/GeoLite2-ASN.mmdb  https://git.io/GeoLite2-ASN.mmdb
+```
+
+On Windows (PowerShell):
+
+```
+New-Item -ItemType Directory -Path databases
+curl.exe -L -o databases/GeoLite2-City.mmdb https://git.io/GeoLite2-City.mmdb
+curl.exe -L -o databases/GeoLite2-ASN.mmdb  https://git.io/GeoLite2-ASN.mmdb
+```
+
+> These files are bundled into the jar at build time. If they are missing you
+> will hit `Missing database GeoLite2-City.mmdb inside the jar...` when you run
+> the program.
+
 ## Usage
 
 Build an executable fat jar:
@@ -35,7 +58,8 @@ On Windows:
 .\gradlew.bat shadowJar
 ```
 
-Run it, passing the target host or IP as an argument:
+The result is `build/libs/vtraceroute.jar` (a prebuilt copy already exists
+there). Run it, passing the target host or IP as an argument:
 
 ```bash
 java -jar build/libs/vtraceroute.jar example.com
@@ -79,13 +103,14 @@ Run the test suite:
 ## Project structure
 
 ```
+databases/      GeoLite2 City and ASN databases (create + download these)
 src/main/java/com/arazcode/vtraceroute/
 ├── Core/       Hop, Probe, OperatingSystem
 ├── Geo/        GeoIpService, GeoIpResult, Flags, IpUtils
 ├── Parser/     TracerouteParser, Windows/Linux parsers + factory
 ├── Main.java   CLI entry point
 └── Utils.java  Process execution helpers
-databases/      GeoLite2 City and ASN databases (bundled into the jar)
+build/libs/     Build output, e.g. vtraceroute.jar
 ```
 
 ## License
